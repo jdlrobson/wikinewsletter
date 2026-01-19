@@ -1,5 +1,7 @@
 # Wikipedia Reader Prototype Starter Kit
 
+![Screenshot](screenshot.png)
+
 A Vue 3 prototyping environment for experimenting with Wikipedia reader features. Built for hackathons and rapid iteration, this starter kit lets you test new UI ideas in front of real users with minimal setup.
 
 ## Features
