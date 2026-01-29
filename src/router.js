@@ -9,7 +9,7 @@ const routes = [
 		component: HomeView
 	},
 	{
-		path: '/wiki/:title',
+		path: '/issue/:title',
 		name: 'article',
 		component: ArticleView
 	}

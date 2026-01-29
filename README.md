@@ -68,7 +68,6 @@ src/
 ├── components/
 │   ├── AppHeader.vue      # Search bar and navigation
 │   ├── AppFooter.vue      # License and branding
-│   └── ArticleSearch.vue  # Wikipedia search with autocomplete
 ├── composables/
 │   └── useColorMode.js    # Dark mode detection
 ├── services/

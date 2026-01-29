@@ -10,27 +10,7 @@
 			</p>
 
 			<div class="app-footer__buttons">
-				<CdxButton
-					weight="quiet"
-					action="default"
-					:href="'https://www.wikimedia.org/'"
-					target="_blank"
-					rel="noopener"
-				>
-					<CdxIcon :icon="cdxIconLogoWikimedia" />
-					Wikimedia
-				</CdxButton>
-
-				<CdxButton
-					weight="quiet"
-					action="default"
-					:href="'https://doc.wikimedia.org/codex/latest/'"
-					target="_blank"
-					rel="noopener"
-				>
-					<CdxIcon :icon="cdxIconLogoCodex" />
-					Codex
-				</CdxButton>
+				
 			</div>
 		</div>
 	</footer>

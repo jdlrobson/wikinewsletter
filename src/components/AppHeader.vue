@@ -2,29 +2,16 @@
 	<header class="app-header">
 		<div class="app-header__brand">
 			<RouterLink to="/" class="app-header__logo">
-				WikiHack
+				Wikipedia Monthly
 			</RouterLink>
 		</div>
 
 		<div class="app-header__spacer" />
 
 		<div class="app-header__actions">
-			<div v-if="searchExpanded" class="app-header__search">
-				<ArticleSearch
-					ref="searchRef"
-					@navigate="onSearchNavigate"
-				/>
-			</div>
-
-			<CdxButton
-				weight="quiet"
-				aria-label="Search"
-				@click="toggleSearch"
-			>
-				<CdxIcon :icon="cdxIconSearch" />
-			</CdxButton>
 		</div>
 	</header>
+	<div class="marquee"><span>Knowledge is power • Free content for everyone • Click, explore, remix • </span></div>
 </template>
 
 <script>
@@ -32,15 +19,13 @@ import { ref, nextTick } from 'vue';
 import { RouterLink } from 'vue-router';
 import { CdxButton, CdxIcon } from '@wikimedia/codex';
 import { cdxIconSearch } from '@wikimedia/codex-icons';
-import ArticleSearch from '@/components/ArticleSearch.vue';
 
 export default {
 	name: 'AppHeader',
 	components: {
 		RouterLink,
 		CdxButton,
-		CdxIcon,
-		ArticleSearch
+		CdxIcon
 	},
 	setup() {
 		const searchExpanded = ref( false );
@@ -81,10 +66,12 @@ export default {
 .app-header {
 	display: flex;
 	align-items: center;
+	box-sizing: border-box;
 	gap: @spacing-75;
 	padding: @spacing-75 @spacing-100;
-	background: @background-color-base;
 	border-bottom: @border-subtle;
+	background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+	border-bottom: 6px solid var(--acid-yellow);
 
 	&__brand {
 		flex-shrink: 0;
@@ -93,8 +80,9 @@ export default {
 	&__logo {
 		font-size: @font-size-large;
 		font-weight: @font-weight-bold;
-		color: @color-base;
+		color: white;
 		text-decoration: none;
+		text-shadow: 2px 2px 0 #000;
 
 		&:hover {
 			color: @color-progressive;
@@ -110,9 +98,9 @@ export default {
 		align-items: center;
 		gap: @spacing-50;
 	}
-
-	&__search {
-		width: 280px;
-	}
 }
+
+.marquee { white-space: nowrap; overflow: hidden; border: 3px inset #000; padding: 6px; background: #000; color: var(--acid-yellow); }
+.marquee span { display: inline-block; padding-left: 100%; animation: scroll 18s linear infinite; }
+@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 </style>

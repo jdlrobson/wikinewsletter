@@ -1,46 +1,64 @@
 <template>
 	<div class="home-view">
 		<div class="home-view__hero">
-			<h1 class="home-view__title">WikiHack Starter</h1>
+			<h1 class="home-view__title">Wikipedia Monthly</h1>
 			<p class="home-view__subtitle">
-				A prototyping environment for Wikipedia reader features
+				The unofficial monthly Wikipedia magazine.
 			</p>
 		</div>
 
 		<div class="home-view__quick-links">
-			<h2 class="home-view__section-title">Quick Links</h2>
-			<div class="home-view__links">
-				<RouterLink
-					v-for="article in quickLinks"
-					:key="article.title"
-					:to="getArticleRoute( article.title )"
-					class="home-view__link"
-				>
-					{{ article.label }}
-				</RouterLink>
-			</div>
+			<h2 class="home-view__section-title">Previous editions</h2>
+			<ul class="home-view__links">
+				<li v-for="article in editions">
+					<RouterLink
+						:key="article.title"
+						:to="getArticleRoute( article.title )"
+						class="home-view__link"
+					>
+						{{ article.label }}
+					</RouterLink>
+				</li>
+				<li>
+					<RouterLink
+						key="__new"
+						:to="getArticleRoute( nextEdition )"
+						class="home-view__link"
+					>
+						[unpublished] Issue {{  nextEdition }} - {{ nextEditionMonthLabel }} {{  nextEditionYearLabel }}
+					</RouterLink>
+				</li>
+			</ul>
 		</div>
 	</div>
 </template>
 
 <script>
+import data from '../../data/index.json';
+import { ref } from 'vue';
+import { CdxButton, CdxIcon } from '@wikimedia/codex';
 import { RouterLink, useRoute } from 'vue-router';
+import {  getNextEditionMonth,
+    readableMonth } from '../libraries';
 
 export default {
 	name: 'HomeView',
 	components: {
+		CdxButton,
 		RouterLink
 	},
 	setup() {
 		const route = useRoute();
-
-		const quickLinks = [
-			{ title: 'JavaScript', label: 'JavaScript' },
-			{ title: 'Wikipedia', label: 'Wikipedia' },
-			{ title: 'Vue.js', label: 'Vue.js' },
-			{ title: 'MediaWiki', label: 'MediaWiki' },
-			{ title: 'Wikimedia_Foundation', label: 'Wikimedia Foundation' }
-		];
+		const editions = data.editions;
+		const nextEdition = ref( editions.length + 1 );
+		const nextEditionMonth = ref( getNextEditionMonth() );
+		const nextEditionMonthLabel = ref( readableMonth( nextEditionMonth.value ) );
+		const y = ( new Date() ).getFullYear();
+		const nextEditionYearLabel = ref(
+			String(
+				nextEditionMonth.value === 11 ? y - 1 : y
+			)
+		);
 
 		/**
 		 * Generate route object for an article, preserving query params.
@@ -55,7 +73,11 @@ export default {
 		} );
 
 		return {
-			quickLinks,
+			nextEditionMonth,
+			nextEditionMonthLabel,
+			nextEditionYearLabel,
+			nextEdition,
+			editions,
 			getArticleRoute
 		};
 	}
@@ -96,9 +118,12 @@ export default {
 	}
 
 	&__links {
+		list-style: none;
 		display: flex;
 		flex-wrap: wrap;
 		gap: @spacing-50;
+		flex-flow: column;
+		margin-bottom: 40px;
 	}
 
 	&__link {
