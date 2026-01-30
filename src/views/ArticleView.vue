@@ -52,8 +52,8 @@
 
 			<edition-section
 				:title="`🎥 On the socials`"
-				:pages="socials.pages.slice( 0, 5 )"
 			>
+				<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@wikipedia/video/7571112168255425799" data-video-id="7571112168255425799" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@wikipedia" href="https://www.tiktok.com/@wikipedia?refer=embed">@wikipedia</a> The future of knowledge is yours to protect. <a title="wikipedia25" target="_blank" href="https://www.tiktok.com/tag/wikipedia25?refer=embed">#Wikipedia25</a> <a target="_blank" title="♬ Wikipedia25 - Wikipedia" href="https://www.tiktok.com/music/Wikipedia25-7571112261562600212?refer=embed">♬ Wikipedia25 - Wikipedia</a> </section> </blockquote>
 			</edition-section>
 			<edition-section
 				:key="mostReadArchive.pages.slice( 0, 9 ).map( p => p.title ).join('_')"
@@ -77,6 +77,7 @@
 			
 			<edition-section
 				:title="`📸 Images of ${month}`"
+				:pages="potd.pages.slice( 0, 9 )"
 			>
 				<p>In case you missed all the pictures of the day that have been featured over the last month, here's a chance to pause and take in their beauty! Thanks to our contributors for sharing these beautiful images. Did you know you can contribute your own images to help illustrate Wikipedia by uploading to <a href="https://commons.wikimedia.org/wiki/Special:UploadWizard">Wikimedia Commons?</a>. Explore all the featured pictures on <a href="">Wikimedia Commons</a></p>
 			</edition-section>
@@ -144,6 +145,7 @@ export default {
 		const isDraft = ref( true );
 		const question = ref( {} );
 		const mostRead = ref( {} );
+		const potd	= ref( {} );
 		const mostReadArchive = ref( {} );
 		const socials = ref( {} );
 		const diffBlog = ref( {} );
@@ -197,6 +199,7 @@ export default {
 				const data = await getArticle( title );
 				isDraft.value = data.draft;
 				year.value = data.year;
+				potd.value = data.potd;
 				diffBlog.value = data.diffBlog;
 				month.value = readableMonth( data.month );
 				intro.value = data.intro;
@@ -230,6 +233,10 @@ export default {
 
 		// https://www.tiktok.com/embed.js is tiktok embed
 		onMounted(() => {
+			const script = document.createElement('script');
+			script.src = "https://www.tiktok.com/embed.js";
+			script.async = true;
+			document.body.appendChild( script );
 		});
 		const onPublish = () => {
 			alert( 'For now you\'ll have to imagine this worked!' );
@@ -237,6 +244,7 @@ export default {
 				JSON.stringify( {
 					draft: false,
 					year: year.value,
+					potd: potd.value,
 					month: month.value,
 					intro: intro.value,
 					socials: socials.value,
@@ -291,7 +299,8 @@ export default {
 			isDraft,
 			wikitextToHtml,
 			userPageLink, titleToLink,
-			year, month, intro, mostRead, question, thankYous, mostReadArchive, diffBlog, socials,
+			year, month, intro, mostRead,
+			potd, question, thankYous, mostReadArchive, diffBlog, socials,
 			status,
 			error,
 			pageTitle
