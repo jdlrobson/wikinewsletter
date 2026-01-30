@@ -151,9 +151,12 @@ export default {
 		const diffBlog = ref( {} );
 		const thankYous = ref( {} );
 		const year = ref( '' );
-		const month = ref( '' );
+		const monthNumber = ref( null );
 		const intro = ref( '' );
 
+		const month = computed(() => {
+			return readableMonth( monthNumber.value );
+		})
 		const mostReadTextSubstitution = ( pages ) => {
 			return pages.length === 1 ? pages[ 0 ].title :
 				pages.map( ( p, i ) => {
@@ -201,7 +204,7 @@ export default {
 				year.value = data.year;
 				potd.value = data.potd;
 				diffBlog.value = data.diffBlog;
-				month.value = readableMonth( data.month );
+				monthNumber.value = data.month;
 				intro.value = data.intro;
 				mostRead.value = data.mostRead;
 				question.value = data.question;
@@ -243,9 +246,9 @@ export default {
 			console.log(
 				JSON.stringify( {
 					draft: false,
+					month: monthNumber.value,
 					year: year.value,
 					potd: potd.value,
-					month: month.value,
 					intro: intro.value,
 					socials: socials.value,
 					diffBlog: diffBlog.value,
@@ -253,7 +256,7 @@ export default {
 					question: question.value,
 					thankYous: thankYous.value,
 					mostReadArchive: mostReadArchive.value,		
-				} )
+				}, null, 2 )
 			);
 		}
 
