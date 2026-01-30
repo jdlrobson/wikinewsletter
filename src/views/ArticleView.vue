@@ -21,8 +21,8 @@
 			<p v-for="text in intro" v-html="wikitextToHtml(text)"></p>
 			<edition-section
 				:title="`🔥 Most read in ${month}`"
-				:wikitext="mostRead.text"
-				:pages="mostRead.pages"
+				:wikitext="mostReadTextComputed"
+				:pages="mostRead.pages.slice( 0, 9 )"
 			>
 			<p>See how familiar this month's topics were by playing the <a href="https://wikigrid.netlify.app/">WikiGrid game</a>.</p>
 			</edition-section>
@@ -40,8 +40,8 @@
 			</edition-section>
 			<edition-section
 				:title="`📅 In another time`"
-				:wikitext="mostReadArchive.text.replace( '$2', `${readableMonth( mostReadArchive.month )} ${mostReadArchive.year}`)"
-				:pages="mostReadArchive.pages"
+				:wikitext="mostReadArchiveTextComputed"
+				:pages="mostReadArchive.pages.slice( 0, 9 )"
 			>
 			</edition-section>
 			
@@ -127,6 +127,33 @@ export default {
 		const year = ref( '' );
 		const month = ref( '' );
 		const intro = ref( '' );
+
+		const mostReadTextSubstitution = ( pages ) => {
+			return pages.length === 1 ? pages[ 0 ].title :
+				pages.map( ( p, i ) => {
+					const prefix = i === pages.length - 1 ?
+							' and ': ( i === 0 ? '' : ', ' );
+					return `${ prefix }[[ ${p.title.replace(/_/g, ' ')} ]]`;
+				} ).join( '' );
+		};
+		
+		const mostReadTextComputed = computed( () => {
+			const pages = mostRead.value.pages.slice( 0, 9 ) || []
+			const text = mostRead.value.text;
+			return text.replace(
+				'$1',
+				mostReadTextSubstitution( pages )
+			);
+		} );
+
+		const mostReadArchiveTextComputed = computed( () => {
+			const pages = mostReadArchive.value.pages.slice( 0, 9 ) || []
+			const text = mostReadArchive.value.text;
+			return text.replace(
+				'$1',
+				mostReadTextSubstitution( pages )
+			).replace( '$2', `${readableMonth( mostReadArchive.value.month )} ${mostReadArchive.value.year}`)
+		} );
 		/**
 		 * Fetch and display the article.
 		 */
@@ -192,8 +219,9 @@ export default {
 			);
 		}
 		return {
+			mostReadArchiveTextComputed,
+			mostReadTextComputed,
 			updateQuestion,
-			readableMonth,
 			onPublish,
 			isDraft,
 			wikitextToHtml,

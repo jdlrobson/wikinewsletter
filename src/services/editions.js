@@ -5,6 +5,7 @@
 import {  getNextEditionMonth } from '../libraries';
 import { intro, mostReadText, retroMostReadText } from './boilerplate.js';
 const USER_AGENT = 'WikiHackStarter/0.1 (Wikimedia Hackathon Prototype)';
+import IGNORE_TITLES from '../../data/ignore.json' assert { type: 'json' };
 
 export async function prepareThankyous() {
 	const thankYous = {
@@ -19,40 +20,88 @@ export async function prepareThankyous() {
 }
 
 export async function getMostReadPages( month, year ) {
-	const pages = [
-		{
-			title: 'XYZ',
-			image: ''
-		},
-		{
-			title: '2026 Adamuz train derailments',
-			image: ''
-		},
-		{
-			title: 'Proposed United_States acquisition of Greenland',
-			image: ''
-		}
-	];
-	return Promise.resolve( pages );
+	// add one since months are 0-indexed
+	const mm = String( month + 1 ).padStart( 2, '0' );
+	const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/${year}/${mm}/all-days`;
+	let response;
+	try {
+		response = await fetch( url );
+	} catch ( e ) {
+		return [];
+	}
+
+	if ( !response.ok ) {
+		return [];
+	}
+
+	const json = await response.json();
+	const articles = ( json && json.items && json.items[ 0 ] && json.items[ 0 ].articles ) || [];
+
+	const pages = articles
+		.map( ( a ) => ( {
+			title: a.article ? decodeURIComponent( a.article ).replace( / /g, '_' ) : a.article,
+			image: '',
+			rank: a.rank ? Number( a.rank ) : undefined,
+			views: a.views
+		} ) )
+		.sort( ( a, b ) => ( a.rank || Infinity ) - ( b.rank || Infinity ) )
+		.filter( ( p ) => IGNORE_TITLES.filter( ( ignore ) => p.title.indexOf( ignore ) > -1 ).length === 0 )
+		.slice( 0, 50 );
+
+	const pagesWithThumbnails = await fetchPageThumbnails( pages, 250 );
+	return pagesWithThumbnails.filter( ( p ) => p.image );
 };
+
+/**
+ * Given an array of pages (with `title`), query MediaWiki's `pageimages`
+ * API to fetch 250px thumbnails and attach them to the `image` property.
+ * Handles batching (50 titles per request) and CORS via `origin=*`.
+ */
+export async function fetchPageThumbnails( pages, size = 250 ) {
+	if ( !Array.isArray( pages ) || pages.length === 0 ) return pages;
+
+	const BATCH_SIZE = 50;
+	// map titles (normalized with underscores) to page objects
+	const titleMap = new Map();
+	pages.forEach( ( p ) => {
+		const key = ( p.title || '' ).replace( / /g, '_' );
+		titleMap.set( key, p );
+	} );
+
+	const keys = Array.from( titleMap.keys() );
+	for ( let i = 0; i < keys.length; i += BATCH_SIZE ) {
+		const batch = keys.slice( i, i + BATCH_SIZE );
+		const titlesParam = batch.map( ( t ) => encodeURIComponent( t ) ).join( '|' );
+		const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=${size}&origin=*&titles=${titlesParam}`;
+		try {
+			const res = await fetch( url );
+			if ( !res.ok ) continue;
+			const json = await res.json();
+			if ( json && json.query && json.query.pages ) {
+				Object.values( json.query.pages ).forEach( ( pg ) => {
+					const titleKey = ( pg.title || '' ).replace( / /g, '_' );
+					const target = titleMap.get( titleKey );
+					if ( target && pg.thumbnail && pg.thumbnail.source ) {
+						target.image = pg.thumbnail.source;
+					}
+				} );
+			}
+		} catch ( e ) {
+			// ignore batch errors and continue
+		}
+	}
+
+	return pages;
+}
 
 export async function prepareMostRead( month, year, text ) {
 	const mostReadPages = await getMostReadPages( month, year );
-	const mostReadTextSubstitution = mostReadPages.length === 1 ? mostReadPages[ 0 ].title :
-		mostReadPages.map( ( p, i ) => {
-				const prefix = i === mostReadPages.length - 1 ?
-					' and ': ( i === 0 ? '' : ', ' );
-				return `${ prefix }[[ ${p.title} ]]`;
-		} ).join( '' );
 
 	const mostRead = {
 		pages: mostReadPages,
 		month,
 		year,
-		text: text.replace(
-			'$1',
-			mostReadTextSubstitution
-		)
+		text
 	};
 	return Promise.resolve( mostRead );
 }

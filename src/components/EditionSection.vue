@@ -66,6 +66,9 @@ export default {
     margin-top: 25px;
     width: 100%;
     overflow-x: scroll;
+    display: grid; /* Defines the container as a grid */
+    grid-template-columns: repeat(3, 1fr); /* Creates 3 columns of equal width */
+    grid-template-rows: repeat(3, 1fr);
     img {
         width: 200px;
         height: 200px;
