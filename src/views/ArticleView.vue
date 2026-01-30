@@ -20,12 +20,24 @@
 			</CdxMessage>
 			<p v-for="text in intro" v-html="wikitextToHtml(text)"></p>
 			<edition-section
+				:key="mostRead.pages.slice( 0, 9 ).map( p => p.title ).join('_')"
 				:title="`🔥 Most read in ${month}`"
 				:wikitext="mostReadTextComputed"
 				:pages="mostRead.pages.slice( 0, 9 )"
 			>
-			<p>See how familiar this month's topics were by playing the <a href="https://wikigrid.netlify.app/">WikiGrid game</a>.</p>
+				<p>See how familiar this month's topics were by playing the <a href="https://wikigrid.netlify.app/">WikiGrid game</a>.</p>
+				<cdx-button v-if="isDraft" @click="clickTweakMostRead">Tweak results</cdx-button>
 			</edition-section>
+
+			<!-- Tweak Most Read Dialog -->
+			<CdxDialog v-if="showTweakDialog" @close="closeTweakDialog" title="Tweak" :open="true">	
+				<p>Uncheck any pages you want to remove from the most-read list, then click Save.</p>
+				<div v-for="(p, i) in mostRead.pages" :key="p.title">
+					<CdxCheckbox v-model="tweakSelections[p.title]">{{ p.title.replace(/_/g, ' ') }}</CdxCheckbox>
+				</div>
+				<CdxButton @click="closeTweakDialog">Cancel</CdxButton>
+				<CdxButton action="progressive" @click="saveTweakDialog">Save</CdxButton>
+			</CdxDialog>
 			<edition-section
 				:title="`📝 News from the movement`"
 			>
@@ -39,10 +51,12 @@
 				<p>Follow Wikipedia on social media: <a>instagram</a> <a>facebook</a>.</p>
 			</edition-section>
 			<edition-section
+				:key="mostReadArchive.pages.slice( 0, 9 ).map( p => p.title ).join('_')"
 				:title="`📅 In another time`"
 				:wikitext="mostReadArchiveTextComputed"
 				:pages="mostReadArchive.pages.slice( 0, 9 )"
 			>
+				<cdx-button v-if="isDraft" @click="clickTweakMostReadArchive">Tweak results</cdx-button>
 			</edition-section>
 			
 			<edition-section
@@ -91,7 +105,8 @@ import { ref, computed, watch, onMounted } from 'vue';
 import Banner from '../components/Banner.vue';
 import EditionSection from '../components/EditionSection.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { CdxProgressBar, CdxMessage, CdxTextInput, CdxButton } from '@wikimedia/codex';
+import { CdxProgressBar, CdxMessage, CdxTextInput, CdxButton,
+	CdxDialog, CdxCheckbox } from '@wikimedia/codex';
 import { getArticle, getQuestion } from '@/services/editions';
 import { readableMonth, wikitextToHtml, titleToLink, userPageLink } from '../libraries';
 import Feature from '../components/Feature.vue';
@@ -101,6 +116,8 @@ export default {
 	components: {
 		Banner,
 		CdxButton,
+		CdxDialog,
+		CdxCheckbox,
 		Feature,
 		EditionSection,
 		CdxProgressBar,
@@ -138,12 +155,15 @@ export default {
 		};
 		
 		const mostReadTextComputed = computed( () => {
+			console.log('computed mostReadTextComputed', mostRead.value.pages.slice( 0, 9 ));
 			const pages = mostRead.value.pages.slice( 0, 9 ) || []
 			const text = mostRead.value.text;
-			return text.replace(
+			const rtnText = text.replace(
 				'$1',
 				mostReadTextSubstitution( pages )
 			);
+			console.log(rtnText);
+			return rtnText;
 		} );
 
 		const mostReadArchiveTextComputed = computed( () => {
@@ -218,7 +238,42 @@ export default {
 				} )
 			);
 		}
+
+		const showTweakDialog = ref( false );
+		const tweakSelections = ref( {} );
+
+		const clickTweakMostRead = () => {
+			const pages = ( mostRead.value && mostRead.value.pages ) || [];
+			const sel = {};
+			pages.forEach( ( p ) => {
+				sel[ p.title ] = true;
+			} );
+			tweakSelections.value = sel;
+			showTweakDialog.value = true;
+		};
+
+		const clickTweakMostReadArchive = () => {
+
+		};
+
+		const closeTweakDialog = () => {
+			showTweakDialog.value = false;
+		};
+
+		const saveTweakDialog = () => {
+			const pages = ( mostRead.value && mostRead.value.pages ) || [];
+			const filtered = pages.filter( ( p ) => !!tweakSelections.value[ p.title ] );
+			mostRead.value.pages = filtered;
+			showTweakDialog.value = false;
+			console.log('tweakled')
+		};
 		return {
+			clickTweakMostReadArchive,
+			clickTweakMostRead,
+			showTweakDialog,
+			tweakSelections,
+			saveTweakDialog,
+			closeTweakDialog,
 			mostReadArchiveTextComputed,
 			mostReadTextComputed,
 			updateQuestion,
