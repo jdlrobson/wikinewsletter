@@ -39,16 +39,21 @@
 				<CdxButton action="progressive" @click="saveTweakDialog">Save</CdxButton>
 			</CdxDialog>
 			<edition-section
+				v-if="diffBlog.pages.length"
 				:title="`📝 News from the movement`"
 			>
+				<p>Stay updated with the latest happenings in the Wikimedia movement through these insightful blog posts.</p>
+				<ul>
+					<li v-for="post in diffBlog.pages.slice( 0, 5 )">
+						<a :href="post.url">{{ post.title }}</a>
+					</li>
+				</ul>
 			</edition-section>
 
 			<edition-section
 				:title="`🎥 On the socials`"
+				:pages="socials.pages.slice( 0, 5 )"
 			>
-				<p>Did you know Wikipedia has a TikTok channel? In case you missed it here's the latest video from the TikTok channel.</p>
-				<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@wikipedia/video/7597425624315170066" data-video-id="7597425624315170066" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@wikipedia" href="https://www.tiktok.com/@wikipedia?refer=embed">@wikipedia</a> Meet the people behind Wikipedia: building, protecting, and expanding knowledge for everyone <a title="wikipedia25" target="_blank" href="https://www.tiktok.com/tag/wikipedia25?refer=embed">#Wikipedia25</a> <a target="_blank" title="♬ Meet the people behind Wikipedia - Wikipedia" href="https://www.tiktok.com/music/Meet-the-people-behind-Wikipedia-7597425692138195719?refer=embed">♬ Meet the people behind Wikipedia - Wikipedia</a> </section> </blockquote>
-				<p>Follow Wikipedia on social media: <a>instagram</a> <a>facebook</a>.</p>
 			</edition-section>
 			<edition-section
 				:key="mostReadArchive.pages.slice( 0, 9 ).map( p => p.title ).join('_')"
@@ -140,6 +145,8 @@ export default {
 		const question = ref( {} );
 		const mostRead = ref( {} );
 		const mostReadArchive = ref( {} );
+		const socials = ref( {} );
+		const diffBlog = ref( {} );
 		const thankYous = ref( {} );
 		const year = ref( '' );
 		const month = ref( '' );
@@ -191,12 +198,14 @@ export default {
 				const data = await getArticle( title );
 				isDraft.value = data.draft;
 				year.value = data.year;
+				diffBlog.value = data.diffBlog;
 				month.value = readableMonth( data.month );
 				intro.value = data.intro;
 				mostRead.value = data.mostRead;
 				question.value = data.question;
 				thankYous.value = data.thankYous;
 				mostReadArchive.value = data.mostReadArchive;
+				socials.value = data.socials;
 				status.value = 'ready';
 			} catch ( e ) {
 				console.error( 'Failed to fetch article:', e );
@@ -231,6 +240,8 @@ export default {
 					year: year.value,
 					month: month.value,
 					intro: intro.value,
+					socials: socials.value,
+					diffBlog: diffBlog.value,
 					mostRead: mostRead.value,
 					question: question.value,
 					thankYous: thankYous.value,
@@ -281,7 +292,7 @@ export default {
 			isDraft,
 			wikitextToHtml,
 			userPageLink, titleToLink,
-			year, month, intro, mostRead, question, thankYous, mostReadArchive,
+			year, month, intro, mostRead, question, thankYous, mostReadArchive, diffBlog, socials,
 			status,
 			error,
 			pageTitle

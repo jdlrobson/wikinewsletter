@@ -121,6 +121,23 @@ export async function prepareQuestion() {
 	return Promise.resolve( question );
 }
 
+async function prepareDiffBlog() {
+	return Promise.resolve( {
+		pages: []
+	} );
+}
+
+async function prepareSocials() {
+	return Promise.resolve( {
+		pages: [
+			{
+				label: 'The future of knowledge is yours to protect',
+				url: 'https://www.tiktok.com/@wikipedia/video/7571112168255425799?is_from_webapp=1&sender_device=pc&web_id=7600929926498420255'
+			}
+		]
+	} );
+}
+
 export async function prepareEdition() {
 	const month = getNextEditionMonth();
 	let year = ( new Date() ).getFullYear();
@@ -133,10 +150,14 @@ export async function prepareEdition() {
 	const mostReadArchive = await prepareMostRead( month, year - 5, retroMostReadText );
 	const question = await prepareQuestion();
 	const thankYous = await prepareThankyous();
+	const diffBlog = await prepareDiffBlog();
+	const socials = await prepareSocials();
 
 	return {
+		socials,
 		draft: true,
 		mostReadArchive,
+		diffBlog,
 		thankYous,
 		question,
 		mostRead,

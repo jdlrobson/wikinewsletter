@@ -4,7 +4,7 @@
         <div>
             <p v-if="wikitext" v-html="wikitextToHtml(wikitext)"></p>
             <div v-if="pages" class="image-carousel">
-                <a v-for="p in pages" :href="titleToLink(p.title)">
+                <a v-for="p in pages" :href="p.url || titleToLink(p.title)">
                     <img :src="p.image">
                 </a>
             </div>
