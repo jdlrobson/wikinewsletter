@@ -121,10 +121,53 @@ export async function prepareQuestion() {
 	return Promise.resolve( question );
 }
 
-async function prepareDiffBlog() {
-	return Promise.resolve( {
-		pages: []
-	} );
+async function prepareDiffBlog( month, year ) {
+	const url = '/data/blog.rss';
+
+	try {
+ 		const res = await fetch( url );
+ 		if ( !res.ok ) return { pages: [] };
+ 		const txt = await res.text();
+
+ 		// Parse feed XML (supports RSS <item> and Atom <entry>)
+ 		const parser = new DOMParser();
+ 		const xml = parser.parseFromString( txt, 'application/xml' );
+ 		const nodes = Array.from( xml.querySelectorAll( 'item, entry' ) );
+
+ 		const posts = nodes.map( ( node ) => {
+ 			const titleNode = node.querySelector( 'title' );
+ 			let link = '';
+ 			// Atom: <link rel="alternate" href="..."/> or <link href="..."/>
+ 			const altLink = node.querySelector( 'link[rel="alternate"]' ) || node.querySelector( 'link[href]' );
+ 			if ( altLink ) {
+ 				link = altLink.getAttribute && altLink.getAttribute( 'href' ) ? altLink.getAttribute( 'href' ) : altLink.textContent || '';
+ 			} else {
+ 				const linkNode = node.querySelector( 'link' );
+ 				link = linkNode ? ( linkNode.textContent || '' ) : '';
+ 			}
+
+ 			const pub = node.querySelector( 'pubDate, published, updated' );
+ 			const pubDate = pub ? new Date( pub.textContent ) : null;
+
+ 			return {
+ 				title: titleNode ? titleNode.textContent.trim() : '',
+ 				url: link,
+ 				pubDate
+ 			};
+ 		} ).filter( ( p ) => p.pubDate );
+
+		console.log('posts',posts);
+ 		// Input `month` is 0-indexed elsewhere; match by month and year
+ 		const filtered = posts.filter( ( p ) => {
+ 			return true;
+ 			/*const d = p.pubDate;
+			return d.getFullYear() === year && d.getMonth() === month;*/
+ 		} ).map( ( p ) => ( { title: p.title, url: p.url } ) );
+
+ 		return { pages: filtered };
+ 	} catch ( e ) {
+ 		return { pages: [] };
+ 	}
 }
 
 async function prepareSocials() {
@@ -150,7 +193,8 @@ export async function prepareEdition() {
 	const mostReadArchive = await prepareMostRead( month, year - 5, retroMostReadText );
 	const question = await prepareQuestion();
 	const thankYous = await prepareThankyous();
-	const diffBlog = await prepareDiffBlog();
+	const diffBlog = await prepareDiffBlog( month, year );
+	console.log('diffBlog',diffBlog);
 	const socials = await prepareSocials();
 
 	return {

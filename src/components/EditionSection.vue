@@ -75,4 +75,8 @@ export default {
         object-fit: cover;
     }
 }
+
+ul {
+    margin-left: 30px;
+}
 </style>

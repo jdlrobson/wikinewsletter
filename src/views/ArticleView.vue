@@ -162,7 +162,6 @@ export default {
 		};
 		
 		const mostReadTextComputed = computed( () => {
-			console.log('computed mostReadTextComputed', mostRead.value.pages.slice( 0, 9 ));
 			const pages = mostRead.value.pages.slice( 0, 9 ) || []
 			const text = mostRead.value.text;
 			const rtnText = text.replace(

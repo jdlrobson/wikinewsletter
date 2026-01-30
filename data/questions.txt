@@ -1,0 +1,59 @@
+Question,Wikipedia article
+Why is the sky blue?,Rayleigh scattering
+Why are sunsets red?,Rayleigh scattering
+Why don’t birds get electrocuted when they sit on power lines?,Electric shock
+Why does ice float on water?,Density
+Why do humans have fingerprints?,Fingerprint
+Why do cats purr?,Purr
+Why are there no naturally green mammals?,Mammal coloration
+Why do we only see one side of the Moon?,Tidal locking
+Why is lightning hotter than the surface of the Sun?,Lightning
+Why do onions make people cry?,Onion lachrymatory factor
+Why does helium make voices sound higher?,Helium speech effect
+Are there more possible games of chess than atoms in the observable universe?,Shannon number
+What would happen if the Sun suddenly disappeared?,Sun
+Why is space black if the universe is full of stars?,Olbers' paradox
+Why does time run slower near massive objects?,Gravitational time dilation
+Why does the universe appear to be expanding?,Expansion of the universe
+Why can’t we see dark matter?,Dark matter
+Why does the Moon cause tides?,Tide
+Why do astronauts grow taller in space?,Space adaptation syndrome
+Why does dividing by zero break mathematics?,Division by zero
+Why are prime numbers so important?,Prime number
+Why does randomness look patterned to humans?,Apophenia
+Why is the Monty Hall problem so unintuitive?,Monty Hall problem
+Why does the birthday paradox work?,Birthday problem
+Why is zero even?,Parity (mathematics)
+Why do computers use binary?,Binary number
+Why is it so hard to predict the weather?,Chaos theory
+Why did people believe tomatoes were poisonous?,Tomato
+Why did medieval maps include sea monsters?,Sea monster
+Why was purple once the color of emperors?,Tyrian purple
+Why did the Roman Empire fall?,Fall of the Western Roman Empire
+Why do many countries drive on the left?,Left- and right-hand traffic
+Why did people build pyramids all over the world?,Pyramid
+Why was paper invented in China?,Papermaking
+Why did the calendar skip days in 1582?,Gregorian calendar
+Why do humans sleep?,Sleep
+Why do we dream?,Dream
+Why do people yawn when others do?,Yawning
+Why do some diseases disappear?,Eradication of infectious diseases
+Why are vaccines effective?,Vaccination
+Why does the body have wisdom teeth?,Wisdom tooth
+Why do humans blush?,Blushing
+Why can some animals regenerate limbs but humans cannot?,Regeneration (biology)
+Why are there time zones?,Time zone
+Why do rivers curve?,Meander
+Why are there deserts near the equator?,Hadley cell
+Why do volcanoes form in specific places?,Plate tectonics
+Why does the Earth have seasons?,Axial tilt
+Why are there no rivers in Antarctica?,Geography of Antarctica
+Why do continents drift?,Continental drift
+Why do we knock on wood?,Knocking on wood
+Why do clocks run clockwise?,Clock face
+Why do mirrors reverse left and right but not up and down?,Mirror image
+Why are most bottles cylindrical?,Cylinder
+Why do we say “bless you” after sneezing?,Bless you
+Why are QWERTY keyboards arranged that way?,QWERTY
+Why are some words untranslatable?,Lexical gap
+Why do fictional pirates say “Arrr”?,West Country English
