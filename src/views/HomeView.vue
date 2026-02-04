@@ -19,6 +19,9 @@
 						{{ article.label }}
 					</RouterLink>
 				</li>
+			</ul>
+			<h2 class="home-view__section-title">Draft the next edition</h2>
+			<ul class="home-view__links">
 				<li>
 					<RouterLink
 						key="__new"
